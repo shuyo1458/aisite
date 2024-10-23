@@ -8,5 +8,27 @@
 <body>
     <h1>Welcome to the Chat App</h1>
     <p>This is a placeholder page. Your chat interface should be implemented here.</p>
+    <button onclick="testAPI()">Test API</button>
+    <p id="result"></p>
+
+    <script>
+        function testAPI() {
+            fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: 'Hello, API!' }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').textContent = JSON.stringify(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            });
+        }
+    </script>
 </body>
 </html>

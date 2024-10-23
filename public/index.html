@@ -3,32 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
+    <title>AI Chat Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+        }
+        header {
+            background: #35424a;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        nav ul {
+            padding: 0;
+            list-style: none;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        section {
+            padding: 40px 0;
+        }
+        #chatbox {
+            border: 1px solid #ccc;
+            height: 300px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+        #userInput {
+            width: 70%;
+            padding: 5px;
+        }
+        #sendButton {
+            padding: 5px 10px;
+        }
+        .product {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .product img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-right: 20px;
+        }
+        footer {
+            background: #35424a;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .hero-image {
+            background-image: url('/imgs/hero-image.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+        .about-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .about-image {
+            width: 48%;
+            height: auto;
+            object-fit: cover;
+        }
+        .about-text {
+            width: 48%;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Chat App</h1>
-    <p>This is a placeholder page. Your chat interface should be implemented here.</p>
-    <button onclick="testAPI()">Test API</button>
-    <p id="result"></p>
+    <header>
+        <div class="container">
+            <h1>AI Chat Website</h1>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#chat">Chat</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home">
+        <div class="hero-image">
+            <div class="container">
+                <h2>Welcome to Our AI Chat Service</h2>
+                <p>Experience the future of communication with our advanced AI chatbot.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <h2>About Us</h2>
+            <div class="about-container">
+                <img src="/imgs/about-image.jpg" alt="About Us" class="about-image">
+                <div class="about-text">
+                    <p>We are dedicated to providing cutting-edge AI solutions to enhance your daily life and business operations. Our team of experts works tirelessly to develop innovative AI technologies that can transform the way you interact with technology.</p>
+                    <p>With a focus on user-friendly interfaces and powerful backend systems, we strive to make AI accessible to everyone. Whether you're a business looking to optimize operations or an individual seeking to simplify your daily tasks, our AI solutions are designed to meet your needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="chat">
+        <div class="container">
+            <h2>Chat with AI</h2>
+            <div id="chatbox"></div>
+            <input type="text" id="userInput" placeholder="Type your message here...">
+            <button id="sendButton" onclick="sendMessage()">Send</button>
+            <button id="testAPIButton" onclick="testAPI()">Test API</button>
+            <p id="apiTestResult"></p>
+        </div>
+    </section>
+
+    <section id="products">
+        <div class="container">
+            <h2>Our Products</h2>
+            <div class="product">
+                <img src="/imgs/ai-assistant.jpg" alt="AI Assistant">
+                <div>
+                    <h3>AI Assistant</h3>
+                    <p>A personal AI assistant to help with your daily tasks.</p>
+                </div>
+            </div>
+            <div class="product">
+                <img src="/imgs/smart-home.jpg" alt="Smart Home Integration">
+                <div>
+                    <h3>Smart Home Integration</h3>
+                    <p>Integrate AI into your home for a smarter living experience.</p>
+                </div>
+            </div>
+            <div class="product">
+                <img src="/imgs/business-analytics.jpg" alt="Business Analytics AI">
+                <div>
+                    <h3>Business Analytics AI</h3>
+                    <p>Harness the power of AI for your business intelligence needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <p>Email: info@aichatwebsite.com</p>
+            <p>Phone: (123) 456-7890</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 AI Chat Website. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script>
-        function testAPI() {
+        function appendMessage(sender, message) {
+            const chatbox = document.getElementById('chatbox');
+            chatbox.innerHTML += `<p><strong>${sender}:</strong> ${message}</p>`;
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            if (message) {
+                appendMessage('You', message);
+                callAPI(message);
+                userInput.value = '';
+            }
+        }
+
+        function callAPI(message) {
             fetch('/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ message: 'Hello, API!' }),
+                body: JSON.stringify({ message: message }),
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                document.getElementById('result').textContent = JSON.stringify(data);
+                appendMessage('AI', data.reply);
             })
             .catch(error => {
                 console.error('Error:', error);
-                document.getElementById('result').textContent = 'Error: ' + error.message;
+                appendMessage('System', 'Error: ' + error.message);
             });
         }
+
+        function testAPI() {
+            const testMessage = "Hello, this is a test message!";
+            const resultElement = document.getElementById('apiTestResult');
+            resultElement.textContent = "Testing API...";
+            
+            callAPI(testMessage);
+            
+            resultElement.textContent = "API test completed. Check the chat box for the response.";
+        }
+
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
     </script>
 </body>
 </html>

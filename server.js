@@ -4,14 +4,16 @@ const path = require('path');
 const app = express();
 
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const API_KEY = 'sk-NUZWQZBSjJSzXIha67283bD30a45498bBeFd3b738b54B9E1';
 const API_URL = 'https://free.gpt.ge/v1/chat/completions';
 
-// 添加調試日誌
+// 添加詳細的日誌記錄
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    console.log('Headers:', req.headers);
+    console.log('Body:', req.body);
     next();
 });
 
@@ -22,6 +24,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api/chat', async (req, res) => {
+    console.log('Received chat request');
     try {
         const response = await axios.post(API_URL, {
             model: "gpt-3.5-turbo",
@@ -32,10 +35,10 @@ app.post('/api/chat', async (req, res) => {
                 'Content-Type': 'application/json',
             },
         });
-
+        console.log('API response:', response.data);
         res.json({ reply: response.data.choices[0].message.content });
     } catch (error) {
-        console.error('Error:', error.response ? error.response.data : error.message);
+        console.error('Error in /api/chat:', error);
         res.status(500).json({ error: 'An error occurred while processing your request.' });
     }
 });
@@ -48,16 +51,13 @@ app.get('*', (req, res) => {
 
 // 添加錯誤處理中間件
 app.use((err, req, res, next) => {
-    console.error('Error:', err.stack);
+    console.error('Unhandled error:', err);
     res.status(500).send('Something broke!');
 });
 
-// 為了在本地測試，添加以下代碼
-if (process.env.NODE_ENV !== 'production') {
-    const port = process.env.PORT || 3000;
-    app.listen(port, () => {
-        console.log(`Server running at http://localhost:${port}`);
-    });
-}
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
 
 module.exports = app;

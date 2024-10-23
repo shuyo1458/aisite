@@ -1,5 +1,6 @@
 const express = require('express');
 const axios = require('axios');
+const path = require('path');
 const app = express();
 
 app.use(express.json());
@@ -7,6 +8,11 @@ app.use(express.static('public'));
 
 const API_KEY = 'sk-NUZWQZBSjJSzXIha67283bD30a45498bBeFd3b738b54B9E1';
 const API_URL = 'https://free.gpt.ge/v1/chat/completions';
+
+// 添加根路由處理
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.post('/api/chat', async (req, res) => {
     try {
@@ -33,5 +39,12 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 });
 
-// 移除 app.listen，改為導出 app
+// 為了在本地測試，添加以下代碼
+if (process.env.NODE_ENV !== 'production') {
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+        console.log(`Server running at http://localhost:${port}`);
+    });
+}
+
 module.exports = app;

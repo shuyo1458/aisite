@@ -1,7 +1,6 @@
 const express = require('express');
 const axios = require('axios');
 const app = express();
-const port = 3000;
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -28,6 +27,11 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+// 添加錯誤處理中間件
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
 });
+
+// 移除 app.listen，改為導出 app
+module.exports = app;
